@@ -1,6 +1,6 @@
 import { Box, Typography } from "@material-ui/core";
 
-function Index() {  
+function index() {  
     return (
         <Box>
             <Typography variant="h2">Bem vindo ao</Typography>
@@ -9,4 +9,4 @@ function Index() {
     );
 }
 
-export default Index;
+export default index;
