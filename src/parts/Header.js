@@ -3,7 +3,7 @@ import { MenuOpen } from "@material-ui/icons";
 
 function Header() {
     return (
-        <AppBar position="static">
+        <AppBar className="header" position="static">
             <Toolbar>
                 <IconButton edge="start" color="inherit" aria-label="menu">
                     <MenuOpen />

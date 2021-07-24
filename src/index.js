@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './App.css';
+import './app.css';
 import Index from './pages';
 import reportWebVitals from './reportWebVitals';
 import "@fontsource/roboto";

@@ -4,11 +4,11 @@ import { TestGenerator } from "./test-generator/TestGenerator";
 function Index() {
 
     return (
-        <Container>
+        <Container className="qsp">
             <h1>Quem Sabe Prova</h1>
             <small>Criação de prova</small>
             <br />
-            <Box>
+            <Box className="testBox">
                 <TestGenerator />
             </Box>
         </Container>

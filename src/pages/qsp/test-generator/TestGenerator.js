@@ -1,5 +1,5 @@
-import { Box, TextField, MenuItem, Grid, Paper, Button } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
+import { Box, TextField, MenuItem, Grid, Paper, Button, Fab } from "@material-ui/core";
+import { Add, Print } from "@material-ui/icons";
 
 import React from "react";
 
@@ -24,11 +24,32 @@ const styles = {
         objectFit: "contain",
         transformOrigin: "top left",
         transform: "scale(.75)",
+        chapter: {
+            marginTop: 0,
+        },
+        printButton: {
+            position: "absolute",
+            top: 0,
+            right: 0,
+            transform: "translate(50%, -50%)"
+        },
         questions: {
             display: "flex",
             flexDirection: "column",
             flexWrap: "wrap",
-            maxHeight: "80%"
+            maxHeight: "80%",
+            marginTop: "32px",
+            columnCount: 3,
+            question: {
+                breakInside: "avoid",
+                breakBefore: "column",
+                text: {
+                    marginTop: 0
+                },
+                alternatives: {
+                    listStyle: "lower-alpha"
+                }
+            }
         }
     },
     testOptions: {
@@ -120,7 +141,7 @@ export class TestGenerator extends React.Component {
 
     render(){
         return (
-            <Box style={{marginTop: 32}}>
+            <Box className="testContainer" style={{marginTop: 32}}>
                 <Grid container spacing={4} style={styles.testOptions}>
                     <Grid item lg={6}>
                         <h3>Adicionar pergunta</h3>
@@ -180,8 +201,11 @@ export class TestGenerator extends React.Component {
                         </Grid>
                     </Grid>
                 </Grid>
-                <span style={styles.preview}>Pré visualização</span>
-                <Paper elevation={5} style={styles.testPage}>
+                <span className="noPrint" style={styles.preview}>Pré visualização</span>
+                <Paper className="test" elevation={5} style={styles.testPage}>
+                    <Fab className="noPrint" style={styles.testPage.printButton} color="primary" onClick={()=>{window.print()}} aria-label="print">
+                        <Print />
+                    </Fab>
                     <h1>
                         Quem Sabe Prova - { new Date().toLocaleString("pt-br", {year: "numeric"})} - {this.state.bookName}
                         <br/>
@@ -221,9 +245,9 @@ export class TestGenerator extends React.Component {
                                                 chapterQuestions.map(
                                                     (question, i) => {
                                                         return (
-                                                            <Box>
-                                                                <h5 style={styles.testPage.questions.question}>{++i}) {question.question}</h5>
-                                                                <ol style={styles.testPage.questions.alternatives}>
+                                                            <Box style={styles.testPage.questions.question}>
+                                                                <h5 style={styles.testPage.questions.question.text}>{++i}) {question.question}</h5>
+                                                                <ol style={styles.testPage.questions.question.alternatives}>
                                                                     <li>{question.A}</li>
                                                                     <li>{question.B}</li>
                                                                     <li>{question.C}</li>
