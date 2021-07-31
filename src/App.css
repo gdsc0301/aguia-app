@@ -30,4 +30,15 @@ code {
     .qsp .testBox .testContainer .test {
         all: unset !important;
     }
+
+    .qsp .testBox .testContainer .test .questions {
+        display: block !important;
+        flex-flow: unset !important;
+        max-height: none !important;
+    }
+
+    .qsp .testBox .testContainer .test .questions > * {
+        display: inline-block;
+        width: 100%;
+    }
 }
