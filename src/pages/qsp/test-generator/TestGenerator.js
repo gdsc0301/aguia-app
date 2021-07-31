@@ -179,7 +179,8 @@ export class TestGenerator extends React.Component {
                                     color="primary"
                                     variant="contained"
                                     type="submit"
-                                    endIcon={<Add />}>Inserir nova Pergunta</Button>
+                                    endIcon={<Add />}
+                                    onClick={this.addQuestion}>Inserir nova Pergunta</Button>
                             </Grid>
                         </Grid>
                     </Grid>
