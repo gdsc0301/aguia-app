@@ -66,9 +66,9 @@ const styles = {
 export class TestGenerator extends React.Component {
     constructor(props) {
         super(props);
-        let prevState = JSON.parse(localStorage.getItem("state"));
+        let prevState = localStorage.getItem("state");
         if(prevState){
-            this.state = prevState;
+            this.state = JSON.parse(prevState);
         }else {
             this.state = {
                 bookName: "",
