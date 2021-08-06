@@ -1,5 +1,5 @@
 import React from "react";
-import { AppBar,Toolbar, IconButton, Typography, SwipeableDrawer, List, ListItem, ListItemIcon, ListItemText, Link } from "@material-ui/core";
+import { AppBar,Toolbar, IconButton, Typography, SwipeableDrawer, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import { MenuOpen, AssignmentTurnedIn } from "@material-ui/icons";
 
 function ListItemLink(props) {
@@ -20,15 +20,15 @@ function Header() {
     ];
     
     const toggleMenu = function(){
-        setState({...state, ["MenuOpen"]: !state.MenuOpen});
+        setState({...state, MenuOpen: !state.MenuOpen});
     }
 
     const openMenu = function(){
-        setState({...state, ["MenuOpen"]: true});
+        setState({...state, MenuOpen: true});
     }
 
     const closeMenu = function(){
-        setState({...state, ["MenuOpen"]: false});
+        setState({...state, MenuOpen: false});
     }
 
     return (
@@ -47,7 +47,7 @@ function Header() {
                     <List component="nav">
                     {
                         menuItems.map(item=>(
-                            <ListItemLink button key={item.title} href={item.link}>
+                            <ListItemLink button key={item.title.replaceAll(" ", "").toLowerCase()} href={item.link}>
                                 <ListItemIcon>{item.icon}</ListItemIcon>
                                 <ListItemText primary={item.title} />
                             </ListItemLink>

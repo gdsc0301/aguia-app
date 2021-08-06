@@ -89,10 +89,12 @@ export class TestGenerator extends React.Component {
     }
 
     storeState() {
+        console.log("storeState");
         localStorage.setItem("state", JSON.stringify(this.state));
     }
 
     bindInput(e) {
+        console.log("bindInput");
         this.setState((curr)=>{
             let theState = curr;
             theState.newQuestion[e.target.name] = e.target.value;
@@ -102,56 +104,66 @@ export class TestGenerator extends React.Component {
     }
 
     updateTest(e) {
+        console.log("updateTest");
         let newValue = {};
         newValue[e.target.name] = e.target.value;
-        console.log(newValue);
         this.setState(newValue);
+        this.storeState();
     }
 
     addQuestion(e) {
         e.preventDefault();
-        console.log(e, this.state);
+        console.log("addQuestion");
 
         this.setState((curr)=>{
             if(curr.newQuestion.question === "") return;
 
             let theState = curr;
-
-            console.log("The Question: ", curr.newQuestion);
             if(Array.isArray(theState.bookChapters[curr.newQuestion.questionChapter])) {
-                console.log("As Array: ", theState.bookChapters[curr.newQuestion.questionChapter]);
                 theState.bookChapters[curr.newQuestion.questionChapter].push(curr.newQuestion);
-                console.log("As Array after: ", theState.bookChapters[curr.newQuestion.questionChapter]);
             }else {
-                console.log("Not Array: ", theState.bookChapters[curr.newQuestion.questionChapter]);
                 theState.bookChapters[curr.newQuestion.questionChapter] = [curr.newQuestion];
-                console.log("Not Array after: ", theState.bookChapters[curr.newQuestion.questionChapter]);
             }
             
-            theState.newQuestion = {
-                question: "",
-                questionChapter: 0,
-                A:"", B:"", C:"", D:""
-            };
-            //console.log(theState);
+            // theState.newQuestion = {
+            //     question: "",
+            //     questionChapter: 0,
+            //     A:"", B:"", C:"", D:""
+            // };
+            
             return theState;
         },()=>{
             this.storeState();
-            e.target.reset();
+            // this.setState({...this.state, newQuestion: {
+            //     question: "",
+            //     questionChapter: 0,
+            //     A:"", B:"", C:"", D:""
+            // }})
         });
     }
 
     removeQuestion(chapter, question) {
+        console.log("removeQuestion");
+
         this.setState((curr)=>{
             console.log(curr);
+            if(!curr.bookChapters[chapter] || (curr.bookChapters[chapter].length === 1 && !curr.bookChapters[chapter][0])){
+                delete curr.bookChapters[chapter];
+                curr.bookChapters[chapter] = curr.bookChapters[chapter].map(function(question, i){
+                    return question ? question : false;
+                })
+                return curr;
+            }
+                
             delete curr.bookChapters[chapter][question];
+
             return curr;
         });
+        this.storeState();
     }
 
     render(){
         let questionNumber = 0;
-
         return (
             <Box className="testContainer" style={{marginTop: 32}}>
                 <Grid container spacing={4} style={styles.testOptions}>
@@ -162,15 +174,15 @@ export class TestGenerator extends React.Component {
                                 <TextField onInput={this.bindInput} style={{...styles.testOptions.question.input, marginBottom: 16}} variant="outlined" name="question" label="Insira a pergunta" multiline required />
                             </Grid>
                             <Grid item md={3}>
-                                <TextField onInput={this.bindInput} style={{...styles.testOptions.question.input, marginBottom: 16}} variant="outlined" name="questionChapter" label="Capítulo" type="number" required />
+                                <TextField value={this.state.newQuestion.questionChapter} onInput={this.bindInput} style={{...styles.testOptions.question.input, marginBottom: 16}} variant="outlined" name="questionChapter" label="Capítulo" type="number" required />
                             </Grid>
                         </Grid>
                         <Grid container spacing={4}>
                             <Grid item lg={12}>
-                                <TextField style={styles.testOptions.question.alternative} onInput={this.bindInput} name="A" placeholder='Resposta "A"' required/>
-                                <TextField style={styles.testOptions.question.alternative} onInput={this.bindInput} name="B" placeholder='Resposta "B"' required/>
-                                <TextField style={styles.testOptions.question.alternative} onInput={this.bindInput} name="C" placeholder='Resposta "C"' required/>
-                                <TextField style={styles.testOptions.question.alternative} onInput={this.bindInput} name="D" placeholder='Resposta "D"' required/>
+                                <TextField value={this.state.newQuestion.A} style={styles.testOptions.question.alternative} onChange={this.bindInput} name="A" placeholder='Resposta "A"' required/>
+                                <TextField value={this.state.newQuestion.B} style={styles.testOptions.question.alternative} onChange={this.bindInput} name="B" placeholder='Resposta "B"' required/>
+                                <TextField value={this.state.newQuestion.C} style={styles.testOptions.question.alternative} onChange={this.bindInput} name="C" placeholder='Resposta "C"' required/>
+                                <TextField value={this.state.newQuestion.D} style={styles.testOptions.question.alternative} onChange={this.bindInput} name="D" placeholder='Resposta "D"' required/>
                             </Grid>
                         </Grid>
                         <Grid container alignItems="center">
@@ -192,6 +204,7 @@ export class TestGenerator extends React.Component {
                                     label="Nome do livro"
                                     variant="outlined"
                                     name="bookName"
+                                    value={this.state.bookName}
                                     placeholder="Ex. O Libertador"
                                     onInput={this.updateTest} />
                             </Grid>
@@ -205,7 +218,8 @@ export class TestGenerator extends React.Component {
                                     defaultValue={testCategories[0]}
                                     onChange={this.updateTest}>
                                     {
-                                        testCategories.map((item,i) => (
+                                        testCategories.map(
+                                            (item,i) => (
                                                 <MenuItem value={item} selected={!i}>{item}</MenuItem>
                                             )
                                         )
@@ -251,7 +265,7 @@ export class TestGenerator extends React.Component {
                         {
                             this.state.bookChapters.map((chapterQuestions, chapterNumber) => {
                                 let chapter = undefined;
-                                if(chapterQuestions){
+                                if(typeof chapterQuestions === "object" && Array.isArray(chapterQuestions)){
                                     chapter = (
                                         <>
                                             <h4 style={styles.testPage.chapter}>Capítulo {chapterNumber}</h4>
@@ -262,7 +276,7 @@ export class TestGenerator extends React.Component {
 
                                                         return (
                                                             <Box style={styles.testPage.questions.question}>
-                                                                <Fab className="noPrint" chapter={chapterNumber} question={questionIndex} style={styles.testPage.questions.removeButton} color="primary" onClick={this.removeQuestion} aria-label="print">
+                                                                <Fab className="noPrint" chapter={chapterNumber} question={questionIndex} style={styles.testPage.questions.removeButton} color="primary" onClick={()=>{this.removeQuestion(chapterNumber, questionIndex)}} aria-label="print">
                                                                     <Remove />
                                                                 </Fab>
                                                                 <h5 style={styles.testPage.questions.question.text}>{questionNumber}) {question.question}</h5>
