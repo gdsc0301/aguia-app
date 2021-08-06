@@ -1,5 +1,5 @@
-import { Box, TextField, MenuItem, Grid, Paper, Button, Fab } from "@material-ui/core";
-import { Add, Remove, Print } from "@material-ui/icons";
+import { Box, TextField, MenuItem, Grid, Paper, Button, IconButton, Fab } from "@material-ui/core";
+import { Add, RemoveCircle, Print } from "@material-ui/icons";
 
 import React from "react";
 
@@ -40,6 +40,16 @@ const styles = {
                 width: "100%",
                 breakInside: "avoid",
                 breakBefore: "column",
+                removeButton: {
+                    width: "16px",
+                    height: "16px",
+                    margin: "4px 0 0 0",
+                    color: "#FFF",
+                    fontSize: "16px",
+                    fontWeight: 900,
+                    textAlign: "center",
+                    float: "right"
+                },
                 text: {
                     margin: 0,
                     marginTop: 4
@@ -276,10 +286,14 @@ export class TestGenerator extends React.Component {
 
                                                         return (
                                                             <Box style={styles.testPage.questions.question}>
-                                                                <Fab className="noPrint" chapter={chapterNumber} question={questionIndex} style={styles.testPage.questions.removeButton} color="primary" onClick={()=>{this.removeQuestion(chapterNumber, questionIndex)}} aria-label="print">
-                                                                    <Remove />
-                                                                </Fab>
-                                                                <h5 style={styles.testPage.questions.question.text}>{questionNumber}) {question.question}</h5>
+                                                                <h5 style={styles.testPage.questions.question.text}>{questionNumber}) {question.question}
+                                                                    <IconButton
+                                                                        size="small"
+                                                                        style={styles.testPage.questions.question.removeButton}
+                                                                        chapter={chapterNumber} question={questionIndex}
+                                                                        onClick={()=>{this.removeQuestion(chapterNumber, questionIndex)}}
+                                                                        aria-label="delete"><RemoveCircle color="secondary" /></IconButton>
+                                                                </h5>
                                                                 <ol style={styles.testPage.questions.question.alternatives}>
                                                                     <li>{question.A}</li>
                                                                     <li>{question.B}</li>
