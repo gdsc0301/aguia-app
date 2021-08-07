@@ -73,6 +73,51 @@ const styles = {
     }
 };
 
+function Questions(props){
+    let chapters = [];
+    var questionNumber = 0;
+
+    for (const chapterNumber in props.bookChapters) {
+        const chapterQuestions = props.bookChapters[chapterNumber];
+        //console.log(chapterQuestions);
+
+        chapters.push((
+            <>
+                <h4 style={styles.testPage.chapter}>Capítulo {chapterNumber}</h4>
+                {
+                    chapterQuestions.map(
+                        // eslint-disable-next-line no-loop-func
+                        (question, questionIndex) => {
+                            if(!question) return;
+                            questionNumber++;
+
+                            return (
+                                <Box style={styles.testPage.questions.question}>
+                                    <h5 style={styles.testPage.questions.question.text}>{questionNumber}) {question.question}
+                                        <IconButton
+                                            size="small"
+                                            style={styles.testPage.questions.question.removeButton}
+                                            onClick={()=>{props.removeQuestion(chapterNumber, questionIndex)}}
+                                            aria-label="delete"><RemoveCircle color="secondary" /></IconButton>
+                                    </h5>
+                                    <ol style={styles.testPage.questions.question.alternatives}>
+                                        <li key={"qA"}>{question.A}</li>
+                                        <li key={"qB"}>{question.B}</li>
+                                        <li key={"qC"}>{question.C}</li>
+                                        <li key={"qD"}>{question.D}</li>
+                                    </ol>
+                                </Box>
+                            );
+                        }
+                    )
+                }
+            </>
+        ))
+    }
+
+    return chapters;
+}
+
 export class TestGenerator extends React.Component {
     constructor(props) {
         super(props);
@@ -85,26 +130,23 @@ export class TestGenerator extends React.Component {
                 testCategory: testCategories[0],
                 newQuestion: {
                     question: "",
-                    questionChapter: 0,
+                    questionChapter: "",
                     A:"", B:"", C:"", D:""
                 },
-                bookChapters: []
+                bookChapters: {}
             };
         }
 
         this.bindInput = this.bindInput.bind(this);
         this.updateTest = this.updateTest.bind(this);
-        this.addQuestion = this.addQuestion.bind(this);
-        this.removeQuestion = this.removeQuestion.bind(this);
     }
 
     storeState() {
-        console.log("storeState");
-        localStorage.setItem("state", JSON.stringify(this.state));
+        //console.log("storeState", JSON.stringify(this.state));
+        localStorage.setItem("state", JSON.stringify(this.state,));
     }
 
     bindInput(e) {
-        console.log("bindInput");
         this.setState((curr)=>{
             let theState = curr;
             theState.newQuestion[e.target.name] = e.target.value;
@@ -114,7 +156,7 @@ export class TestGenerator extends React.Component {
     }
 
     updateTest(e) {
-        console.log("updateTest");
+        //console.log("updateTest");
         let newValue = {};
         newValue[e.target.name] = e.target.value;
         this.setState(newValue);
@@ -123,57 +165,49 @@ export class TestGenerator extends React.Component {
 
     addQuestion(e) {
         e.preventDefault();
-        console.log("addQuestion");
+        let theState = {...this.state};
 
-        this.setState((curr)=>{
-            if(curr.newQuestion.question === "") return;
+        //console.log("addQuestion", this);
+        //console.log("Question",theState.newQuestion.question);
+        
+        if(theState.newQuestion.question === "") return;
 
-            let theState = curr;
-            if(Array.isArray(theState.bookChapters[curr.newQuestion.questionChapter])) {
-                theState.bookChapters[curr.newQuestion.questionChapter].push(curr.newQuestion);
-            }else {
-                theState.bookChapters[curr.newQuestion.questionChapter] = [curr.newQuestion];
-            }
-            
-            // theState.newQuestion = {
-            //     question: "",
-            //     questionChapter: 0,
-            //     A:"", B:"", C:"", D:""
-            // };
-            
-            return theState;
-        },()=>{
-            this.storeState();
-            // this.setState({...this.state, newQuestion: {
-            //     question: "",
-            //     questionChapter: 0,
-            //     A:"", B:"", C:"", D:""
-            // }})
-        });
-    }
+        if(theState.bookChapters[theState.newQuestion.questionChapter] === undefined) {
+            theState.bookChapters[theState.newQuestion.questionChapter] = [{...theState.newQuestion}];
+        }else {
+            theState.bookChapters[theState.newQuestion.questionChapter].push({...theState.newQuestion});
+        }
 
-    removeQuestion(chapter, question) {
-        console.log("removeQuestion");
+        //console.log("theState", theState);
+        
+        theState.newQuestion = {
+            question: "",
+            questionChapter: "",
+            A:"", B:"", C:"", D:""
+        };
 
-        this.setState((curr)=>{
-            console.log(curr);
-            if(!curr.bookChapters[chapter] || (curr.bookChapters[chapter].length === 1 && !curr.bookChapters[chapter][0])){
-                delete curr.bookChapters[chapter];
-                curr.bookChapters[chapter] = curr.bookChapters[chapter].map(function(question, i){
-                    return question ? question : false;
-                })
-                return curr;
-            }
-                
-            delete curr.bookChapters[chapter][question];
-
-            return curr;
-        });
+        this.setState(theState);
         this.storeState();
     }
 
+    removeQuestion(chapter, question) {
+        //console.log("removeQuestion in chapter: ", chapter);
+
+        this.setState((curr)=>{
+            //console.log(curr.bookChapters[chapter]);
+            if(!curr.bookChapters[chapter] || curr.bookChapters[chapter].length === 0 || (curr.bookChapters[chapter].length === 1 && !curr.bookChapters[chapter][0])){
+                delete curr.bookChapters[chapter];
+                return curr;
+            }
+                
+            curr.bookChapters[chapter].splice(question, 1);
+
+            return curr;
+        }, this.storeState);
+    }
+
     render(){
-        let questionNumber = 0;
+        let theChapters = this.state.bookChapters;
         return (
             <Box className="testContainer" style={{marginTop: 32}}>
                 <Grid container spacing={4} style={styles.testOptions}>
@@ -184,7 +218,7 @@ export class TestGenerator extends React.Component {
                                 <TextField onInput={this.bindInput} style={{...styles.testOptions.question.input, marginBottom: 16}} variant="outlined" name="question" label="Insira a pergunta" multiline required />
                             </Grid>
                             <Grid item md={3}>
-                                <TextField value={this.state.newQuestion.questionChapter} onInput={this.bindInput} style={{...styles.testOptions.question.input, marginBottom: 16}} variant="outlined" name="questionChapter" label="Capítulo" type="number" required />
+                                <TextField value={this.state.newQuestion.questionChapter} onInput={this.bindInput} style={{...styles.testOptions.question.input, marginBottom: 16}} variant="outlined" name="questionChapter" label="Capítulo" required />
                             </Grid>
                         </Grid>
                         <Grid container spacing={4}>
@@ -202,7 +236,7 @@ export class TestGenerator extends React.Component {
                                     variant="contained"
                                     type="submit"
                                     endIcon={<Add />}
-                                    onClick={this.addQuestion}>Inserir nova Pergunta</Button>
+                                    onClick={(e)=>{this.addQuestion(e)}}>Inserir nova Pergunta</Button>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -230,7 +264,7 @@ export class TestGenerator extends React.Component {
                                     {
                                         testCategories.map(
                                             (item,i) => (
-                                                <MenuItem value={item} selected={!i}>{item}</MenuItem>
+                                                <MenuItem key={i} value={item} selected={!i}>{item}</MenuItem>
                                             )
                                         )
                                     }
@@ -272,46 +306,7 @@ export class TestGenerator extends React.Component {
                         </Grid>
                     </Grid>
                     <Box className="questions" style={styles.testPage.questions}>
-                        {
-                            this.state.bookChapters.map((chapterQuestions, chapterNumber) => {
-                                let chapter = undefined;
-                                if(typeof chapterQuestions === "object" && Array.isArray(chapterQuestions)){
-                                    chapter = (
-                                        <>
-                                            <h4 style={styles.testPage.chapter}>Capítulo {chapterNumber}</h4>
-                                            {
-                                                chapterQuestions.map(
-                                                    (question, questionIndex) => {
-                                                        questionNumber++;
-
-                                                        return (
-                                                            <Box style={styles.testPage.questions.question}>
-                                                                <h5 style={styles.testPage.questions.question.text}>{questionNumber}) {question.question}
-                                                                    <IconButton
-                                                                        size="small"
-                                                                        style={styles.testPage.questions.question.removeButton}
-                                                                        chapter={chapterNumber} question={questionIndex}
-                                                                        onClick={()=>{this.removeQuestion(chapterNumber, questionIndex)}}
-                                                                        aria-label="delete"><RemoveCircle color="secondary" /></IconButton>
-                                                                </h5>
-                                                                <ol style={styles.testPage.questions.question.alternatives}>
-                                                                    <li>{question.A}</li>
-                                                                    <li>{question.B}</li>
-                                                                    <li>{question.C}</li>
-                                                                    <li>{question.D}</li>
-                                                                </ol>
-                                                            </Box>
-                                                        );
-                                                    }
-                                                )
-                                            }
-                                        </>
-                                    )
-                                }
-
-                                return chapter;
-                            })
-                        }
+                        <Questions bookChapters={theChapters} removeQuestion={(cNumber, qIndex) => {this.removeQuestion(cNumber, qIndex)}} />
                     </Box>
                 </Paper>
             </Box>

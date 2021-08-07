@@ -46,10 +46,10 @@ function Header() {
                 >
                     <List component="nav">
                     {
-                        menuItems.map(item=>(
-                            <ListItemLink button key={item.title.replaceAll(" ", "").toLowerCase()} href={item.link}>
-                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                <ListItemText primary={item.title} />
+                        menuItems.map((item, i)=>(
+                            <ListItemLink button key={i.toString()} href={item.link}>
+                                <ListItemIcon key={i.toString()}>{item.icon}</ListItemIcon>
+                                <ListItemText key={i.toString()} primary={item.title} />
                             </ListItemLink>
                         ))
                     }
