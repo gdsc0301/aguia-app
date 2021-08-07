@@ -144,7 +144,7 @@ export class TestGenerator extends React.Component {
 
     storeState() {
         //console.log("storeState", JSON.stringify(this.state));
-        localStorage.setItem("state", JSON.stringify(this.state,));
+        localStorage.setItem("state", JSON.stringify(this.state));
     }
 
     bindInput(e) {
@@ -179,16 +179,14 @@ export class TestGenerator extends React.Component {
             theState.bookChapters[theState.newQuestion.questionChapter].push({...theState.newQuestion});
         }
 
-        //console.log("theState", theState);
-        
         theState.newQuestion = {
             question: "",
-            questionChapter: "",
+            questionChapter: theState.newQuestion.question,
             A:"", B:"", C:"", D:""
         };
 
-        this.setState(theState);
-        this.storeState();
+        console.log("theState", theState);
+        this.setState(theState, ()=>{this.storeState();console.log("theState", theState);});
     }
 
     removeQuestion(chapter, question) {
@@ -216,7 +214,7 @@ export class TestGenerator extends React.Component {
                         <h3>Adicionar pergunta</h3>
                         <Grid container spacing={4}>
                             <Grid item md={8}>
-                                <TextField onInput={this.bindInput} style={{...styles.testOptions.question.input, marginBottom: 16}} variant="outlined" name="question" label="Insira a pergunta" multiline required />
+                                <TextField value={this.state.newQuestion.question} onInput={this.bindInput} style={{...styles.testOptions.question.input, marginBottom: 16}} variant="outlined" name="question" label="Insira a pergunta" multiline required />
                             </Grid>
                             <Grid item md={3}>
                                 <TextField value={this.state.newQuestion.questionChapter} onInput={this.bindInput} style={{...styles.testOptions.question.input, marginBottom: 16}} variant="outlined" name="questionChapter" label="Capítulo" required />
