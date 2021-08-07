@@ -181,7 +181,7 @@ export class TestGenerator extends React.Component {
 
         theState.newQuestion = {
             question: "",
-            questionChapter: theState.newQuestion.question,
+            questionChapter: theState.newQuestion.questionChapter,
             A:"", B:"", C:"", D:""
         };
 
