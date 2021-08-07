@@ -96,6 +96,7 @@ function Questions(props){
                                     <h5 style={styles.testPage.questions.question.text}>{questionNumber}) {question.question}
                                         <IconButton
                                             size="small"
+                                            className="noPrint"
                                             style={styles.testPage.questions.question.removeButton}
                                             onClick={()=>{props.removeQuestion(chapterNumber, questionIndex)}}
                                             aria-label="delete"><RemoveCircle color="secondary" /></IconButton>
