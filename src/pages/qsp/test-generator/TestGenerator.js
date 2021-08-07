@@ -83,7 +83,7 @@ function Questions(props){
         //console.log(chapterQuestions);
 
         chapters.push((
-            <>
+            <Box style={{breakInside: "avoid"}}>
                 <h4 style={styles.testPage.chapter}>Capítulo {chapterNumber}</h4>
                 {
                     chapterQuestions.map(
@@ -113,7 +113,7 @@ function Questions(props){
                         }
                     )
                 }
-            </>
+            </Box>
         ))
     }
 
