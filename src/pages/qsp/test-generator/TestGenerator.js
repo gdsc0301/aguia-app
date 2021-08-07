@@ -24,6 +24,7 @@ const styles = {
         transform: "scale(.75)",
         chapter: {
             marginTop: 0,
+            pageBreakAfter: "avoid"
         },
         printButton: {
             position: "absolute",
