@@ -23,6 +23,7 @@ const styles = {
         transformOrigin: "top left",
         transform: "scale(.75)",
         chapter: {
+            display: "inline-block",
             marginTop: 0,
             pageBreakAfter: "avoid"
         },
@@ -83,7 +84,7 @@ function Questions(props){
         //console.log(chapterQuestions);
 
         chapters.push((
-            <Box style={{breakInside: "avoid"}}>
+            <>
                 <h4 style={styles.testPage.chapter}>Capítulo {chapterNumber}</h4>
                 {
                     chapterQuestions.map(
@@ -113,7 +114,7 @@ function Questions(props){
                         }
                     )
                 }
-            </Box>
+            </>
         ))
     }
 
