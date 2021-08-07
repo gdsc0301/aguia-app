@@ -185,16 +185,16 @@ export class TestGenerator extends React.Component {
             A:"", B:"", C:"", D:""
         };
 
-        console.log("theState", theState);
-        this.setState(theState, ()=>{this.storeState();console.log("theState", theState);});
+        //console.log("theState", theState);
+        this.setState(theState, ()=>{this.storeState();});
     }
 
     removeQuestion(chapter, question) {
         //console.log("removeQuestion in chapter: ", chapter);
 
         this.setState((curr)=>{
-            //console.log(curr.bookChapters[chapter]);
-            if(!curr.bookChapters[chapter] || curr.bookChapters[chapter].length === 0 || (curr.bookChapters[chapter].length === 1 && !curr.bookChapters[chapter][0])){
+            console.log(curr.bookChapters[chapter].length);
+            if(!curr.bookChapters[chapter] || curr.bookChapters[chapter].length === 0){
                 delete curr.bookChapters[chapter];
                 return curr;
             }
@@ -258,7 +258,7 @@ export class TestGenerator extends React.Component {
                                     label="Categoria"
                                     helperText="Selecione a categoria da prova"
                                     variant="outlined"
-                                    defaultValue={testCategories[0]}
+                                    defaultValue={this.state.testCategory}
                                     onChange={this.updateTest}>
                                     {
                                         testCategories.map(
